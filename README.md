@@ -19,11 +19,27 @@ We just launched **Murf Falcon** – the consistently fastest TTS API, and you'r
 This is a **monorepo** that contains both the backend and frontend for building voice agent applications. It's designed to be your starting point for each day's challenge task.
 
 ```
-falcon-tdova-nov25-livekit/
-├── backend/          # LiveKit Agents backend with Murf Falcon TTS
-├── frontend/         # React/Next.js frontend for voice interaction
-├── start_app.sh      # Convenience script to start all services
-└── README.md         # This file
+ten-days-of-voice-agents-2025/
+├── backend/                    # LiveKit Agents backend with Murf Falcon TTS
+│   ├── src/
+│   │   ├── agent.py           # Main agent implementation
+│   │   └── ...
+│   ├── .env.example           # Environment template
+│   ├── .venv/                 # Python virtual environment
+│   ├── pyproject.toml         # Python dependencies
+│   └── README.md              # Backend docs
+├── frontend/                   # React/Next.js UI for voice interaction
+│   ├── app/
+│   ├── components/
+│   ├── .env.local             # LiveKit configuration
+│   ├── package.json           # Node dependencies
+│   └── README.md              # Frontend docs
+├── challenges/                 # Daily challenge tasks
+│   ├── Day 1 Task.md
+│   ├── Day 2 Task.md
+│   └── ...
+├── start_app.sh               # Convenience script to run all services
+└── README.md                  # This file
 ```
 
 ### Backend
@@ -71,7 +87,7 @@ Make sure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone <https://github.com/Vaishnavi6825/ten-days-of-voice-agents-2025.git>
 cd falcon-tdova-nov25-livekit
 ```
 
@@ -187,28 +203,41 @@ The backend includes a comprehensive test suite:
 cd backend
 uv run pytest
 ```
+# 📋 10-Day Challenge Progress
 
-Learn more about testing voice agents in the [LiveKit testing documentation](https://docs.livekit.io/agents/build/testing/).
+## Day 1: Getting Started ✅
 
-## Contributing & Community
+Task: Get Your Starter Voice Agent Running<br>
+Objective: Successfully deploy a working voice agent and have a real conversation with it.<br>
 
-This is a challenge repository, but we encourage collaboration and knowledge sharing!
+What I Built:
 
-- Share your solutions and learnings on GitHub
-- Post about your progress on LinkedIn
-- Join the [LiveKit Community Slack](https://livekit.io/join-slack)
-- Connect with other challenge participants
+-✅ Cloned and set up the starter repository <br>
+-✅ Configured all environment variables (LiveKit, Murf, Deepgram, Gemini) <br>
+-✅ Successfully ran the backend agent with Murf Falcon TTS <br>
+-✅ Launched the frontend interface <br>
+-✅ Had my first conversation with the voice agent <br>
+-✅ Verified audio quality and response times <br>
 
-## License
+Key Learnings:
 
-This project is based on MIT-licensed templates from LiveKit and includes integration with Murf Falcon. See individual LICENSE files in backend and frontend directories for details.
-
-## Have Fun!
-
-Remember, the goal is to learn, experiment, and build amazing voice AI agents. Don't hesitate to be creative and push the boundaries of what's possible with Murf Falcon and LiveKit!
-
-Good luck with the challenge!
-
+-Understanding the LiveKit Agents framework<br>
+-Setting up Murf Falcon TTS for ultra-low latency<br>
+-Configuring real-time audio streaming pipeline<br>
 ---
 
+| Component | Technology |
+|-----------|-----------|
+| **TTS** | Murf Falcon (Ultra-fast text-to-speech) |
+| **STT** | Deepgram (Speech-to-text) |
+| **LLM** | Google Gemini (Conversational AI) |
+| **Framework** | LiveKit Agents |
+| **Backend** | Python 3.9+ |
+| **Frontend** | React, Next.js, TypeScript |
+| **Styling** | Tailwind CSS |
+| **Real-time** | WebRTC, LiveKit SDK |
+
 Built for the AI Voice Agents Challenge by murf.ai
+Linkedin : [https://www.linkedin.com/posts/kiruthika-m-66b1a5254_murfaivoiceagentschallenge-murfaivoiceagentschallenge-activity-7397979490313756672-S7uD?utm_source=share&utm_medium=member_desktop&rcm=ACoAAD6tG3MBYWx9mOEBXuTEYqfqcrMbrpxUBwE]
+
+---
