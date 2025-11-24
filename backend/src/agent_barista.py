@@ -1,8 +1,8 @@
 import logging
 import os
 import sys
-import json  # <--- Added for JSON export
-from datetime import datetime # <--- Added for timestamps
+import json  # <--- Required for JSON
+from datetime import datetime
 from typing import Annotated, Literal, List
 
 from dotenv import load_dotenv
@@ -21,7 +21,8 @@ from livekit.plugins.turn_detector.multilingual import MultilingualModel
 from pydantic import Field
 from dataclasses import dataclass
 
-# Import our custom modules
+# Import your existing coffee modules
+# (Make sure database.py and order.py are in the same folder)
 from database import (
     COMMON_INSTRUCTIONS,
     FakeDB,
@@ -33,6 +34,46 @@ from order import OrderedDrink, OrderState
 
 load_dotenv()
 logger = logging.getLogger("coffee-barista")
+
+# --- JSON SAVING LOGIC ---
+JSON_FILE = "coffee_orders.json"
+
+def save_order_to_json(order_items: list):
+    """Saves the completed order list to a JSON file."""
+    
+    # Convert the order objects into a clean dictionary format
+    items_data = []
+    for item in order_items:
+        items_data.append({
+            "drink": item.drink_id,
+            "size": item.size,
+            "milk": item.milk_id,
+            "extras": item.syrup_ids,
+            "order_id": item.order_id
+        })
+
+    entry = {
+        "timestamp": datetime.now().isoformat(),
+        "total_items": len(items_data),
+        "items": items_data
+    }
+    
+    # Read existing file or create new list
+    history = []
+    if os.path.exists(JSON_FILE):
+        try:
+            with open(JSON_FILE, "r") as f:
+                history = json.load(f)
+        except json.JSONDecodeError:
+            history = []
+            
+    history.append(entry)
+    
+    # Write back to file
+    with open(JSON_FILE, "w") as f:
+        json.dump(history, f, indent=4)
+    
+    return entry
 
 @dataclass
 class Userdata:
@@ -53,12 +94,15 @@ class CoffeeShopAgent(Agent):
             + menu_instructions("extras/syrups", userdata.extra_items)
             + "\n\n"
             + "Available sizes: Small (s), Medium (m), Large (l), Extra Large (xl)."
+            + "\n\n"
+            + "IMPORTANT: When the user is done ordering (says 'that is all', 'checkout', or 'finalize'), "
+            + "you MUST use the 'finalize_order_tool' to save their order to the system."
         )
 
         super().__init__(
             instructions=instructions,
             tools=[
-                
+                # Tools are auto-detected
             ],
         )
 
@@ -81,8 +125,7 @@ class CoffeeShopAgent(Agent):
         ] = None,
     ) -> str:
         """
-        Use this tool when the user wants to order a coffee or drink. 
-        If the user asks for 'Oat Latte', map it to drink_id='latte' and milk_id='oat_milk' unless 'oat_latte' exists.
+        Use this tool when the user wants to ADD a drink to their order.
         """
         valid_drink = find_items_by_id(ctx.userdata.drink_items, drink_id)
         if not valid_drink:
@@ -130,7 +173,7 @@ class CoffeeShopAgent(Agent):
 
     @function_tool
     async def confirm_order_tool(self, ctx: RunContext[Userdata]) -> str:
-        """List all items currently in the cart to confirm with user."""
+        """List all items currently in the cart."""
         items = ctx.userdata.order.items.values()
         if not items:
             return "The order is currently empty."
@@ -139,6 +182,24 @@ class CoffeeShopAgent(Agent):
         for i in items:
             report += f"- {i.size} {i.drink_id} (Milk: {i.milk_id}, Extras: {i.syrup_ids}) [ID: {i.order_id}]\n"
         return report
+
+    @function_tool
+    async def finalize_order_tool(self, ctx: RunContext[Userdata]) -> str:
+        """
+        Call this tool when the user says they are done or wants to checkout.
+        It saves the order to JSON and clears the cart.
+        """
+        items = list(ctx.userdata.order.items.values())
+        if not items:
+            return "You haven't ordered anything yet."
+        
+        # Save to JSON
+        save_order_to_json(items)
+        
+        # Clear the memory
+        ctx.userdata.order.clear()
+        
+        return "Order finalized and saved to coffee_orders.json! Thank you!"
 
 async def new_userdata() -> Userdata:
     fake_db = FakeDB()

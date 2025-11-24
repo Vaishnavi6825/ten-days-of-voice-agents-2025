@@ -1,0 +1,18 @@
+[
+    {
+        "timestamp": "2025-11-24T14:48:45.587879",
+        "mood": "A bit tired",
+        "goals": [
+            "Staying mindful through breathing exercises"
+        ],
+        "summary": "User felt a bit tired but had already hydrated and done breathing exercises."
+    },
+    {
+        "timestamp": "2025-11-24T14:56:41.457304",
+        "mood": "Feeling so good",
+        "goals": [
+            "No specific goals today"
+        ],
+        "summary": "The user is feeling good because their code is working and has no specific goals today."
+    }
+]
