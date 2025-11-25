@@ -1,0 +1,20 @@
+[
+  {
+    "id": "variables",
+    "title": "Variables",
+    "summary": "In programming, a variable is like a labeled box where you can store data. You give it a name, put a value inside, and can use that name later to retrieve the value.",
+    "sample_question": "Can you explain what a variable is in your own words, and give me a real-world example?"
+  },
+  {
+    "id": "loops",
+    "title": "Loops",
+    "summary": "A loop is a programming structure that repeats a sequence of instructions until a specific condition is met. It helps avoid writing the same code over and over.",
+    "sample_question": "What is the main difference between a For Loop and a While Loop?"
+  },
+  {
+    "id": "functions",
+    "title": "Functions",
+    "summary": "A function is a block of reusable code that performs a specific task. You can pass data into it, and it often returns a result back.",
+    "sample_question": "Why do we use functions instead of writing all our code in one big list?"
+  }
+]
