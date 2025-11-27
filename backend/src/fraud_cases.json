@@ -1,0 +1,53 @@
+[
+    {
+        "case_id": "FRAUD_001",
+        "userName": "John Doe",
+        "securityIdentifier": "12345",
+        "cardEnding": "**** 4242",
+        "transactionName": "Amazon Electronics",
+        "transactionAmount": 50000.0,
+        "transactionTime": "2024-11-25 03:45 AM",
+        "transactionCategory": "e-commerce",
+        "transactionSource": "amazon.com",
+        "merchantLocation": "USA",
+        "securityQuestion": "What is your pet's name?",
+        "securityAnswer": "fluffy",
+        "status": "pending_review",
+        "outcome_note": "",
+        "timestamp": "2025-11-27T13:16:41.200882"
+    },
+    {
+        "case_id": "FRAUD_002",
+        "userName": "Sarah Smith",
+        "securityIdentifier": "67890",
+        "cardEnding": "**** 8888",
+        "transactionName": "DuoLingo Premium",
+        "transactionAmount": 12000.0,
+        "transactionTime": "2024-11-24 11:20 PM",
+        "transactionCategory": "subscription",
+        "transactionSource": "duolingo.com",
+        "merchantLocation": "USA",
+        "securityQuestion": "What city were you born in?",
+        "securityAnswer": "mumbai",
+        "status": "verification_failed",
+        "outcome_note": "Customer verification failed. Call terminated. Customer failed security verification.",
+        "timestamp": "2025-11-27T14:41:33.088018"
+    },
+    {
+        "case_id": "FRAUD_003",
+        "userName": "Raj Kumar",
+        "securityIdentifier": "11111",
+        "cardEnding": "**** 5555",
+        "transactionName": "Alibaba Shopping",
+        "transactionAmount": 35000.0,
+        "transactionTime": "2024-11-25 02:15 AM",
+        "transactionCategory": "e-commerce",
+        "transactionSource": "alibaba.com",
+        "merchantLocation": "China",
+        "securityQuestion": "What is your mother's maiden name?",
+        "securityAnswer": "sharma",
+        "status": "confirmed_safe",
+        "outcome_note": "Customer verified transaction as legitimate. Customer confirmed they made the transaction.",
+        "timestamp": "2025-11-27T14:58:18.952362"
+    }
+]
