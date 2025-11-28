@@ -1,0 +1,230 @@
+{
+  "store_name": "FreshMart Express",
+  "store_description": "Your neighborhood online grocery and food ordering platform",
+  "delivery_time": "3 days",
+  "categories": {
+    "groceries": [
+      {
+        "id": "g001",
+        "name": "Whole Wheat Bread",
+        "category": "groceries",
+        "price": 3.99,
+        "brand": "Nature's Best",
+        "size": "500g",
+        "tags": ["vegan", "whole-grain"]
+      },
+      {
+        "id": "g002",
+        "name": "White Bread",
+        "category": "groceries",
+        "price": 2.99,
+        "brand": "Soft Touch",
+        "size": "450g",
+        "tags": ["vegetarian"]
+      },
+      {
+        "id": "g003",
+        "name": "Eggs",
+        "category": "groceries",
+        "price": 4.99,
+        "brand": "Farm Fresh",
+        "size": "12 count",
+        "tags": ["protein", "vegetarian"]
+      },
+      {
+        "id": "g004",
+        "name": "Milk",
+        "category": "groceries",
+        "price": 3.49,
+        "brand": "Dairy Valley",
+        "size": "1 liter",
+        "tags": ["dairy", "vegetarian"]
+      },
+      {
+        "id": "g005",
+        "name": "Butter",
+        "category": "groceries",
+        "price": 5.99,
+        "brand": "Golden Spread",
+        "size": "250g",
+        "tags": ["dairy", "vegetarian"]
+      },
+      {
+        "id": "g006",
+        "name": "Peanut Butter",
+        "category": "groceries",
+        "price": 6.99,
+        "brand": "Nutty Delight",
+        "size": "500g",
+        "tags": ["vegan", "protein"]
+      },
+      {
+        "id": "g007",
+        "name": "Pasta",
+        "category": "groceries",
+        "price": 2.49,
+        "brand": "Italian Choice",
+        "size": "500g",
+        "tags": ["vegan"]
+      },
+      {
+        "id": "g008",
+        "name": "Tomato Sauce",
+        "category": "groceries",
+        "price": 3.99,
+        "brand": "Red Garden",
+        "size": "400ml",
+        "tags": ["vegan", "gluten-free"]
+      },
+      {
+        "id": "g009",
+        "name": "Olive Oil",
+        "category": "groceries",
+        "price": 8.99,
+        "brand": "Mediterranean Gold",
+        "size": "500ml",
+        "tags": ["vegan", "gluten-free"]
+      },
+      {
+        "id": "g010",
+        "name": "Rice",
+        "category": "groceries",
+        "price": 7.99,
+        "brand": "Basmati King",
+        "size": "1kg",
+        "tags": ["vegan", "gluten-free"]
+      },
+      {
+        "id": "g011",
+        "name": "Cheese",
+        "category": "groceries",
+        "price": 6.49,
+        "brand": "Cheddar Classic",
+        "size": "300g",
+        "tags": ["dairy", "vegetarian"]
+      },
+      {
+        "id": "g012",
+        "name": "Jam",
+        "category": "groceries",
+        "price": 4.49,
+        "brand": "Berry Best",
+        "size": "350g",
+        "tags": ["vegan", "gluten-free"]
+      }
+    ],
+    "snacks": [
+      {
+        "id": "s001",
+        "name": "Potato Chips",
+        "category": "snacks",
+        "price": 2.99,
+        "brand": "Crispy Crunch",
+        "size": "150g",
+        "tags": ["vegan"]
+      },
+      {
+        "id": "s002",
+        "name": "Chocolate Bar",
+        "category": "snacks",
+        "price": 1.99,
+        "brand": "Sweet Bliss",
+        "size": "100g",
+        "tags": ["vegetarian"]
+      },
+      {
+        "id": "s003",
+        "name": "Granola Bars",
+        "category": "snacks",
+        "price": 4.99,
+        "brand": "Energy Boost",
+        "size": "6 pack",
+        "tags": ["vegetarian", "whole-grain"]
+      },
+      {
+        "id": "s004",
+        "name": "Mixed Nuts",
+        "category": "snacks",
+        "price": 5.99,
+        "brand": "Nutty Mix",
+        "size": "200g",
+        "tags": ["vegan", "protein"]
+      },
+      {
+        "id": "s005",
+        "name": "Cookies",
+        "category": "snacks",
+        "price": 3.49,
+        "brand": "Baker's Choice",
+        "size": "250g",
+        "tags": ["vegetarian"]
+      }
+    ],
+    "prepared_food": [
+      {
+        "id": "p001",
+        "name": "Margherita Pizza",
+        "category": "prepared_food",
+        "price": 12.99,
+        "brand": "FreshMart Kitchen",
+        "size": "medium",
+        "tags": ["vegetarian"]
+      },
+      {
+        "id": "p002",
+        "name": "Pepperoni Pizza",
+        "category": "prepared_food",
+        "price": 14.99,
+        "brand": "FreshMart Kitchen",
+        "size": "medium",
+        "tags": []
+      },
+      {
+        "id": "p003",
+        "name": "Chicken Sandwich",
+        "category": "prepared_food",
+        "price": 6.99,
+        "brand": "FreshMart Kitchen",
+        "size": "regular",
+        "tags": []
+      },
+      {
+        "id": "p004",
+        "name": "Veggie Sandwich",
+        "category": "prepared_food",
+        "price": 5.99,
+        "brand": "FreshMart Kitchen",
+        "size": "regular",
+        "tags": ["vegetarian"]
+      },
+      {
+        "id": "p005",
+        "name": "Caesar Salad",
+        "category": "prepared_food",
+        "price": 7.99,
+        "brand": "FreshMart Kitchen",
+        "size": "regular",
+        "tags": ["vegetarian"]
+      },
+      {
+        "id": "p006",
+        "name": "Burrito Bowl",
+        "category": "prepared_food",
+        "price": 9.99,
+        "brand": "FreshMart Kitchen",
+        "size": "regular",
+        "tags": []
+      }
+    ]
+  },
+  "recipes": {
+    "peanut butter sandwich": ["g001", "g006"],
+    "pb sandwich": ["g001", "g006"],
+    "pasta": ["g007", "g008", "g009"],
+    "pasta for two": ["g007", "g008", "g009"],
+    "breakfast": ["g002", "g003", "g004", "g005"],
+    "basic breakfast": ["g002", "g003", "g004"],
+    "cheese sandwich": ["g002", "g011", "g005"],
+    "toast with jam": ["g001", "g012", "g005"]
+  }
+}
