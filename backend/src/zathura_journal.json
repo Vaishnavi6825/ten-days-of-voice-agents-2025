@@ -1,0 +1,23 @@
+[
+    {
+        "timestamp": "2025-11-29T13:37:00.649681",
+        "player": "Player",
+        "location": "Living Room",
+        "status": "Healthy",
+        "inventory": "None"
+    },
+    {
+        "timestamp": "2025-11-29T15:00:30.816445",
+        "player": "Player One",
+        "location": "Kitchen",
+        "status": "Healthy",
+        "inventory": "None"
+    },
+    {
+        "timestamp": "2025-11-29T15:28:18.409645",
+        "player": "Player",
+        "location": "Basement",
+        "status": "Healthy",
+        "inventory": "None"
+    }
+]
