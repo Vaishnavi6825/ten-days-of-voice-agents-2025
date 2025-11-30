@@ -1,0 +1,34 @@
+[
+    {
+        "order_id": "ORD-20251130163200",
+        "timestamp": "2025-11-30T16:32:00.778530",
+        "items": [
+            {
+                "product_id": "tshirt-003",
+                "product_name": "Premium T-Shirt - Black",
+                "quantity": 1,
+                "unit_price": 899,
+                "size": "M",
+                "color": "black"
+            }
+        ],
+        "total": 899,
+        "currency": "INR"
+    },
+    {
+        "order_id": "ORD-20251130164649",
+        "timestamp": "2025-11-30T16:46:49.409218",
+        "items": [
+            {
+                "product_id": "mug-004",
+                "product_name": "Ceramic Coffee Mug - Black Minimalist",
+                "quantity": 1,
+                "unit_price": 750,
+                "size": "N/A",
+                "color": "black"
+            }
+        ],
+        "total": 750,
+        "currency": "INR"
+    }
+]
