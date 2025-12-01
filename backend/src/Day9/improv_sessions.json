@@ -1,0 +1,100 @@
+[
+    {
+        "session_id": "IMPROV-20251201144022",
+        "player_name": "Gihan",
+        "start_time": "2025-12-01T14:40:22.366199",
+        "end_time": "2025-12-01T14:48:49.853090",
+        "total_rounds": 3,
+        "max_rounds": 3,
+        "rounds": [],
+        "performances": [
+            {
+                "round": 1,
+                "text": "Wow. That sounds so spooky.Listen closely. The rules are simple.",
+                "timestamp": "2025-12-01T14:42:54.091827"
+            },
+            {
+                "round": 2,
+                "text": "Oh,look at them fall.Like little ants dropping from the sky.Wait a bring me more scotch.I bet a million won on number seven.Oh, he's loved.How delightful.",
+                "timestamp": "2025-12-01T14:45:21.577431"
+            },
+            {
+                "round": 3,
+                "text": "Wow. That sounds so desperate.I didn't want to drink him. He was my partner, but I had no choice. Please give me the marbles back. I have a daughter waiting for me. I can't die here.Please leave me.",
+                "timestamp": "2025-12-01T14:47:38.902350"
+            }
+        ],
+        "status": "early_exit"
+    },
+    {
+        "session_id": "IMPROV-20251201144022",
+        "player_name": "Gihan",
+        "start_time": "2025-12-01T14:40:22.366199",
+        "end_time": "2025-12-01T14:48:52.157905",
+        "total_rounds": 3,
+        "max_rounds": 3,
+        "rounds": [],
+        "performances": [
+            {
+                "round": 1,
+                "text": "Wow. That sounds so spooky.Listen closely. The rules are simple.",
+                "timestamp": "2025-12-01T14:42:54.091827"
+            },
+            {
+                "round": 2,
+                "text": "Oh,look at them fall.Like little ants dropping from the sky.Wait a bring me more scotch.I bet a million won on number seven.Oh, he's loved.How delightful.",
+                "timestamp": "2025-12-01T14:45:21.577431"
+            },
+            {
+                "round": 3,
+                "text": "Wow. That sounds so desperate.I didn't want to drink him. He was my partner, but I had no choice. Please give me the marbles back. I have a daughter waiting for me. I can't die here.Please leave me.",
+                "timestamp": "2025-12-01T14:47:38.902350"
+            }
+        ]
+    },
+    {
+        "session_id": "IMPROV-20251201145314",
+        "player_name": "Player 001",
+        "start_time": "2025-12-01T14:53:14.467243",
+        "end_time": "2025-12-01T14:57:41.312706",
+        "total_rounds": 0,
+        "max_rounds": 3,
+        "rounds": [],
+        "performances": [],
+        "status": "early_exit"
+    },
+    {
+        "session_id": "IMPROV-20251201150057",
+        "player_name": "play zero zero one",
+        "start_time": "2025-12-01T15:00:57.723124",
+        "end_time": "2025-12-01T15:05:07.729372",
+        "total_rounds": 2,
+        "max_rounds": 3,
+        "rounds": [],
+        "performances": [
+            {
+                "round": 1,
+                "text": "You loseI slap you.Do you want to play?",
+                "timestamp": "2025-12-01T15:03:16.669373"
+            }
+        ],
+        "status": "early_exit"
+    },
+    {
+        "session_id": "IMPROV-20251201150057",
+        "player_name": "play zero zero one",
+        "start_time": "2025-12-01T15:00:57.723124",
+        "end_time": "2025-12-01T15:05:11.997362",
+        "total_rounds": 2,
+        "max_rounds": 3,
+        "rounds": [],
+        "performances": [
+            {
+                "round": 1,
+                "text": "You loseI slap you.Do you want to play?",
+                "timestamp": "2025-12-01T15:03:16.669373"
+            }
+        ],
+        "status": "early_exit"
+    }
+]

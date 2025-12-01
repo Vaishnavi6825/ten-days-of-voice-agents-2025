@@ -19,8 +19,8 @@ from livekit.plugins import google, deepgram, silero ,murf
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 from pydantic import Field
 
-from fraud_case import FraudCase
-from fraud_database import (
+from Day5.fraud_case import FraudCase
+from Day5.fraud_database import (
     initialize_fraud_database,
     find_fraud_case_by_username,
     update_fraud_case,

@@ -23,14 +23,14 @@ from dataclasses import dataclass
 
 # Import your existing coffee modules
 # (Make sure database.py and order.py are in the same folder)
-from database import (
+from Day1.database import (
     COMMON_INSTRUCTIONS,
     FakeDB,
     MenuItem,
     find_items_by_id,
     menu_instructions,
 )
-from order import OrderedDrink, OrderState
+from Day1.order import OrderedDrink, OrderState
 
 load_dotenv()
 logger = logging.getLogger("coffee-barista")

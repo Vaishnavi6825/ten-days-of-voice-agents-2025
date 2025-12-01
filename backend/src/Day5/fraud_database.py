@@ -5,7 +5,7 @@
 import json
 import os
 from typing import Optional, List
-from fraud_case import FraudCase
+from Day5.fraud_case import FraudCase
 
 FRAUD_DB_FILE = "fraud_cases.json"
 

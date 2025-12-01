@@ -16,7 +16,7 @@ from livekit.plugins import google, deepgram, silero, murf
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 from pydantic import Field
 
-from content_manager import ContentManager
+from Day3.content_manager import ContentManager
 
 load_dotenv()
 logger = logging.getLogger("tutor-agent")

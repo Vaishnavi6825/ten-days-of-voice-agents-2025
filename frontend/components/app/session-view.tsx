@@ -95,7 +95,7 @@ export const SessionView = ({
       {/* Chat Transcript */}
       <div
         className={cn(
-          'fixed inset-0 grid grid-cols-1 grid-rows-1',
+          'fixed inset-0 grid grid-cols-1 grid-rows-1 z-40',
           !chatOpen && 'pointer-events-none'
         )}
       >

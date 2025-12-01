@@ -19,8 +19,8 @@ from livekit.plugins.turn_detector.multilingual import MultilingualModel
 from pydantic import Field
 from dataclasses import dataclass
 
-from nykaa_database import FAQ_DATA, find_faq_answer
-from nykaa_order import LeadData
+from Day4.nykaa_database import FAQ_DATA, find_faq_answer
+from Day4.nykaa_order import LeadData
 
 load_dotenv()
 logger = logging.getLogger("Nykaa_sdr")

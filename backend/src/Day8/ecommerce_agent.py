@@ -254,7 +254,7 @@ server = AgentServer()
 
 @server.rtc_session
 async def main(ctx: JobContext) -> None:
-    from ecommerce_catalog import PRODUCTS
+    from Day8.ecommerce_catalog import PRODUCTS
     
     userdata = EcommerceContext(catalog=PRODUCTS)
     

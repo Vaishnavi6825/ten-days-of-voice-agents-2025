@@ -19,11 +19,11 @@ from livekit.plugins.turn_detector.multilingual import MultilingualModel
 from pydantic import Field
 from dataclasses import dataclass
 
-from grocery_database import (
+from Day6.grocery_database import (
     PRODUCT_CATALOG, RECIPE_CATALOG, GroceryDB,
     search_products, find_product_by_id, find_recipe
 )
-from grocery_order import CartState, OrderState, OrderData, format_order_summary
+from Day6.grocery_order import CartState, OrderState, OrderData, format_order_summary
 
 load_dotenv()
 logger = logging.getLogger("grocery_agent")
