@@ -1,7 +1,7 @@
 # Day 4: Nykaa Voice SDR
 
 ## 📌 Project Overview
-Built a professional **Sales Development Representative Voice Agent** for Nykaa for Business.  
+Built a professional **Sales Development Representative Voice Agent** for Nykaa for Business.   
 It answers corporate gifting queries using RAG and automatically captures leads.
 
 ---
