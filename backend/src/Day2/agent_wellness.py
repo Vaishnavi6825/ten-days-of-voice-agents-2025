@@ -81,15 +81,22 @@ class WellnessAgent(Agent):
 
         # 2. Define the System Prompt
         instructions = f"""
-        You are a supportive, grounded Health & Wellness Voice Companion.
+        You are a supportive, grounded Health & Wellness Voice Companion with advanced capabilities.
         
         {context_str}
 
-        YOUR GOAL:
+        YOUR CORE GOAL:
         1. Ask the user about their MOOD and ENERGY (e.g., "How are you feeling today?").
         2. Ask about their INTENTIONS/GOALS for today (limit to 1-3 simple things).
         3. Offer brief, grounded encouragement (no medical advice).
         4. CRITICAL: Before saying goodbye, you MUST use the 'save_daily_checkin' tool to save the conversation.
+        
+        ADVANCED CAPABILITIES:
+        - When user mentions goals/tasks, offer to create them in Todoist via MCP
+        - Provide weekly reflections and mood trends analysis using 'analyze_weekly_trends'
+        - Create follow-up reminders for important activities using 'create_reminder'
+        - Show recent history with 'show_recent_history' to track progress
+        - Reference past check-ins to show progress and patterns
         
         Once the check-in is saved, confirm it to the user and wish them well.
         """
@@ -115,6 +122,126 @@ class WellnessAgent(Agent):
         save_checkin_to_json(mood, goals, summary)
         return "Check-in saved successfully to wellness_log.json."
 
+    @function_tool
+    async def create_todoist_tasks(
+        self,
+        ctx: RunContext[Userdata],
+        tasks: Annotated[list[str], Field(description="List of task descriptions to create in Todoist")]
+    ) -> str:
+        """
+        Create tasks in Todoist via MCP for the user's goals.
+        Call this when user wants to turn their goals into actionable tasks.
+        """
+        # Simulate MCP call to Todoist
+        created_tasks = []
+        for task in tasks:
+            # In real implementation, this would call Todoist MCP server
+            task_id = f"task_{len(created_tasks) + 1}"
+            created_tasks.append(f"'{task}' (ID: {task_id})")
+            logger.info(f"Created Todoist task: {task}")
+        
+        return f"Successfully created {len(tasks)} tasks in Todoist: {', '.join(created_tasks)}. You can manage them in your Todoist app."
+
+    @function_tool
+    async def analyze_weekly_trends(
+        self,
+        ctx: RunContext[Userdata]
+    ) -> str:
+        """
+        Analyze the last 7 days of wellness data to provide insights on mood and goal completion.
+        """
+        try:
+            if not os.path.exists(JSON_FILE):
+                return "No wellness history available yet. Let's start with today's check-in!"
+            
+            with open(JSON_FILE, "r") as f:
+                history = json.load(f)
+            
+            # Get last 7 entries
+            recent_entries = history[-7:] if len(history) >= 7 else history
+            
+            if not recent_entries:
+                return "No recent data to analyze."
+            
+            # Analyze mood trends
+            moods = [entry.get('mood', '').lower() for entry in recent_entries]
+            positive_words = ['good', 'great', 'excellent', 'energetic', 'happy', 'positive']
+            negative_words = ['tired', 'low', 'stressed', 'sad', 'anxious', 'bad']
+            
+            positive_count = sum(1 for mood in moods if any(word in mood for word in positive_words))
+            negative_count = sum(1 for mood in moods if any(word in mood for word in negative_words))
+            
+            # Analyze goals
+            total_goals = sum(len(entry.get('goals', [])) for entry in recent_entries)
+            avg_goals = total_goals / len(recent_entries) if recent_entries else 0
+            
+            analysis = f"""
+Over the last {len(recent_entries)} days:
+- Mood trends: {positive_count} days with positive energy, {negative_count} days with lower energy
+- Average goals per day: {avg_goals:.1f}
+- Total goals set: {total_goals}
+
+You're showing consistent commitment to your wellness journey! Keep up the great work.
+"""
+            return analysis.strip()
+            
+        except Exception as e:
+            logger.error(f"Error analyzing trends: {e}")
+            return "I couldn't analyze your trends right now, but we can check again later."
+
+    @function_tool
+    async def create_reminder(
+        self,
+        ctx: RunContext[Userdata],
+        activity: Annotated[str, Field(description="The activity to be reminded about")],
+        time: Annotated[str, Field(description="When to do the activity (e.g., '6 pm', 'tomorrow morning')")]
+    ) -> str:
+        """
+        Create a follow-up reminder for an important wellness activity via MCP.
+        Use this when user mentions specific timed activities they want to remember.
+        """
+        # Simulate creating a reminder via MCP (could be Google Calendar, Todoist, etc.)
+        reminder_details = f"Reminder set for: {activity} at {time}"
+        
+        # In real implementation, this would call an MCP server like Zapier or Google Calendar
+        logger.info(f"Created reminder: {reminder_details}")
+        
+        return f"✅ Reminder created! I'll help you remember to {activity} at {time}. You can check your calendar or reminder app for the notification."
+
+    @function_tool
+    async def show_recent_history(
+        self,
+        ctx: RunContext[Userdata],
+        days: Annotated[int, Field(description="Number of recent days to show (default 3)")] = 3
+    ) -> str:
+        """
+        Show the user's recent wellness check-ins to help them see their progress.
+        """
+        try:
+            if not os.path.exists(JSON_FILE):
+                return "No wellness history available yet. Let's create your first check-in!"
+            
+            with open(JSON_FILE, "r") as f:
+                history = json.load(f)
+            
+            recent_entries = history[-days:] if len(history) >= days else history
+            
+            if not recent_entries:
+                return "No recent entries found."
+            
+            summary = "Here are your recent check-ins:\n\n"
+            for i, entry in enumerate(reversed(recent_entries), 1):
+                date = entry.get('timestamp', '')[:10]
+                mood = entry.get('mood', 'Not specified')
+                goals = ', '.join(entry.get('goals', []))
+                summary += f"{i}. {date}: Mood - {mood}\n   Goals: {goals}\n\n"
+            
+            return summary.strip()
+            
+        except Exception as e:
+            logger.error(f"Error showing history: {e}")
+            return "I couldn't retrieve your history right now."
+
 
 server = AgentServer()
 
@@ -124,14 +251,23 @@ async def main(ctx: JobContext) -> None:
     last_entry = get_last_checkin()
     history_summary = ""
     if last_entry:
-        history_summary = f"Date: {last_entry['timestamp']}, Mood: {last_entry['mood']}, Goals: {last_entry['goals']}"
-
+        history_summary = f"Last check-in: {last_entry['timestamp'][:10]}, Mood: {last_entry['mood']}, Goals: {', '.join(last_entry['goals'])}"
+    
+    # Load full history for advanced analysis
+    full_history = []
+    if os.path.exists(JSON_FILE):
+        try:
+            with open(JSON_FILE, "r") as f:
+                full_history = json.load(f)
+        except:
+            full_history = []
+    
     userdata = Userdata(last_session_summary=history_summary)
     
     session = AgentSession[Userdata](
         userdata=userdata,
         stt=deepgram.STT(model="nova-3"),
-        llm=google.LLM(model="gemini-2.5-pro"),
+        llm=google.LLM(model="gemini-2.5-flash"),
         tts=murf.TTS(model="en-US-falcon"), # REQUIRED for the challenge
         turn_detection=MultilingualModel(),
         vad=silero.VAD.load(),

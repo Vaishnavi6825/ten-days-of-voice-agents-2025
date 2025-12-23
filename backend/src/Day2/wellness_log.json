@@ -14,5 +14,23 @@
             "No specific goals today"
         ],
         "summary": "The user is feeling good because their code is working and has no specific goals today."
+    },
+    {
+        "timestamp": "2025-12-23T20:31:51.959369",
+        "mood": "Feeling a bit headache",
+        "goals": [
+            "take a short nap"
+        ],
+        "summary": "User is feeling a bit headache and plans to take a short nap with a reminder set for 9:00 AM to wake up."
+    },
+    {
+        "timestamp": "2025-12-23T21:27:18.170980",
+        "mood": "Feeling pretty good, 8/10 mood, 7/10 energy, got good sleep.",
+        "goals": [
+            "Drink more water",
+            "Go for a thirty minute walk",
+            "Finish work project"
+        ],
+        "summary": "User reported good mood and energy after good sleep, set goals to drink water, walk, and finish a work project."
     }
 ]

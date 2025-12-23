@@ -1,9 +1,11 @@
 import logging
 import json
 import os
+import asyncio
 from datetime import datetime
 from typing import Annotated, Optional
 from dataclasses import dataclass
+import random
 
 from dotenv import load_dotenv
 from livekit.agents import (
@@ -14,9 +16,11 @@ from livekit.agents import (
     RunContext,
     cli,
     function_tool,
+    get_job_context,
 )
-from livekit.plugins import google, deepgram, silero ,murf
+from livekit.plugins import google, deepgram, silero, murf
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
+from livekit import api
 from pydantic import Field
 
 from Day5.fraud_case import FraudCase
@@ -87,11 +91,36 @@ def save_fraud_case_to_json(case: FraudCase) -> dict:
     logger.info(f"✅ Fraud case saved to {FRAUD_CASES_FILE}")
     return entry
 
+
 @dataclass
 class FraudContext:
     current_case: Optional[FraudCase] = None
     verification_passed: bool = False
     username_input: str = ""
+    call_type: str = "inbound"  # inbound or outbound
+    is_telephony: bool = False  # True if using actual phone call
+
+
+async def hangup_call():
+    """
+    Terminate the current call for all participants.
+    Used for both in-app and telephony calls.
+    """
+    ctx = cli.get_job_context()
+    if ctx is None:
+        logger.warning("⚠️ Not running in a job context, cannot hangup")
+        return
+    
+    try:
+        await ctx.api.room.delete_room(
+            api.DeleteRoomRequest(
+                room=ctx.room.name,
+            )
+        )
+        logger.info(f"🔌 Hangup call - Room {ctx.room.name} deleted")
+    except Exception as e:
+        logger.error(f"❌ Error hanging up call: {str(e)}")
+
 
 class FraudAlertAgent(Agent):
     def __init__(self, *, userdata: FraudContext) -> None:
@@ -109,7 +138,7 @@ YOUR ROLE & RESPONSIBILITIES:
    - Ask the customer for their username to find their case
    - Use the verify_customer tool to confirm identity using the security question
    - IF VERIFICATION PASSES: Proceed to transaction details
-   - IF VERIFICATION FAILS: Politely apologize and end the call
+   - IF VERIFICATION FAILS: Politely apologize and end the call using end_call tool
 
 3. READ TRANSACTION DETAILS:
    - Once verified, explain the suspicious transaction clearly
@@ -135,6 +164,7 @@ YOUR ROLE & RESPONSIBILITIES:
    - Thank them for their time
    - Provide reassurance
    - Use the save_fraud_case tool to update the database
+   - Use the end_call tool to terminate the session
 
 IMPORTANT GUIDELINES:
 - NEVER ask for full card numbers, PINs, passwords, or CVV
@@ -143,6 +173,7 @@ IMPORTANT GUIDELINES:
 - Be concise but thorough
 - Show empathy and understanding
 - ALWAYS use the save_fraud_case tool when the call ends to persist data
+- Use end_call tool to properly terminate the conversation
 """
 
         super().__init__(
@@ -151,6 +182,7 @@ IMPORTANT GUIDELINES:
                 # Tools are auto-detected via function_tool decorator
             ],
         )
+        self.userdata = userdata
 
     @function_tool
     async def verify_customer(
@@ -172,6 +204,8 @@ IMPORTANT GUIDELINES:
         # Store case in context
         ctx.userdata.current_case = case
         ctx.userdata.username_input = username
+        
+        logger.info(f"📋 Security Question: {case.securityQuestion}")
         
         # Verify security answer (case-insensitive)
         if security_answer.lower().strip() == case.securityAnswer.lower().strip():
@@ -210,6 +244,7 @@ Source: {case.transactionSource}
 
 Does this transaction look familiar to you?
 """
+        logger.info(f"📊 Transaction Details:\n{details}")
         return details
 
     @function_tool
@@ -222,7 +257,7 @@ Does this transaction look familiar to you?
         """
         Save the fraud case decision to the JSON database.
         This mirrors save_lead_to_database from Nykaa agent.
-        Call this at the END of the conversation.
+        Call this BEFORE end_call tool.
         """
         if not ctx.userdata.current_case:
             logger.error("❌ No active fraud case found to save")
@@ -249,20 +284,62 @@ Does this transaction look familiar to you?
         case.outcome_note = note
         case.timestamp = datetime.now().isoformat()
         
-        # Save to JSON file (THIS IS THE KEY PART - Just like Nykaa agent)
+        # Save to JSON file
         try:
             saved_entry = save_fraud_case_to_json(case)
-            logger.info(f"✅ Fraud case {case.case_id} saved to JSON with status: {status}")
+            logger.info(f"✅ Fraud case {case.case_id} saved with status: {status}")
             return f"✅ Case {case.case_id} updated successfully! Status: {status}. Data saved to fraud_cases.json"
         except Exception as e:
             logger.error(f"❌ Error saving fraud case to JSON: {str(e)}")
             return f"Error saving case: {str(e)}"
 
+    @function_tool
+    async def end_call(
+        self,
+        ctx: RunContext[FraudContext]
+    ) -> str:
+        """
+        Terminate the call gracefully for both in-app and telephony calls.
+        Always call save_fraud_case BEFORE this tool.
+        """
+        try:
+            # Add a small delay to let the agent finish speaking
+            await asyncio.sleep(1)
+            
+            call_type = "telephony (real phone)" if ctx.userdata.is_telephony else "in-app"
+            logger.info(f"🔌 Ending {call_type} call...")
+            
+            # Hangup the call
+            await hangup_call()
+            
+            logger.info(f"✅ Call ended successfully")
+            return "Call terminated. Thank you for using SecureBank Fraud Detection."
+        except Exception as e:
+            logger.error(f"❌ Error ending call: {str(e)}")
+            return f"Error ending call: {str(e)}"
+
+
+async def hangup_call():
+    ctx = get_job_context()
+    if ctx is None:
+        return
+    await ctx.api.room.delete_room(api.DeleteRoomRequest(room=ctx.room.name))
+
 
 server = AgentServer()
 
-@server.rtc_session
+
+@server.rtc_session(agent_name="fraud-alert-agent")
 async def main(ctx: JobContext) -> None:
+    """
+    Main entry point for the Fraud Alert Agent.
+    Handles both in-app calls and telephony calls.
+    Agent dispatch ensures explicit routing for telephony.
+    """
+    logger.info("=" * 60)
+    logger.info("🚀 FRAUD ALERT VOICE AGENT INITIALIZED")
+    logger.info("=" * 60)
+    
     # Initialize fraud database
     logger.info("🔄 Initializing fraud database...")
     initialize_fraud_database()
@@ -272,23 +349,61 @@ async def main(ctx: JobContext) -> None:
         with open(FRAUD_CASES_FILE, "r") as f:
             cases = json.load(f)
             logger.info(f"✅ Fraud database initialized with {len(cases)} cases")
+            for case in cases:
+                logger.info(f"   - {case['case_id']}: {case['userName']} ({case['status']})")
     else:
         logger.error("❌ fraud_cases.json not found!")
     
-    # Create fraud context
-    userdata = FraudContext()
+    # Detect call type
+    dial_info = json.loads(ctx.job.metadata or '{}')
+    phone_number = dial_info.get("phone_number")
+    is_outbound = phone_number is not None
+    is_telephony = is_outbound  # Outbound calls are telephony; inbound detected separately
     
-    logger.info("🚀 Starting LiveKit Agent Session...")
+    # Create fraud context
+    userdata = FraudContext(is_telephony=is_telephony)
+    
+    logger.info(f"📞 Call Type: {'TELEPHONY (Outbound)' if is_outbound else 'IN-APP or Inbound Call'}")
+    logger.info(f"🏠 Room: {ctx.room.name}")
+    
+    # For outbound calls, initiate the SIP call
+    if phone_number:
+        sip_trunk_id = 'ST_xxxx'  # Replace with your actual outbound trunk ID from `lk sip outbound list`
+        try:
+            await ctx.api.sip.create_sip_participant(api.CreateSIPParticipantRequest(
+                room_name=ctx.room.name,
+                sip_trunk_id=sip_trunk_id,
+                sip_call_to=phone_number,
+                participant_identity=phone_number,
+                wait_until_answered=True,
+            ))
+            logger.info("📞 Outbound call initiated successfully")
+        except api.TwirpError as e:
+            logger.error(f"❌ Error creating SIP participant: {e.message}, SIP status: {e.metadata.get('sip_status_code')} {e.metadata.get('sip_status')}")
+            ctx.shutdown()
+            return
+    
+    # Create and start agent session
+    logger.info("🔧 Configuring LiveKit Agent Session...")
     session = AgentSession[FraudContext](
         userdata=userdata,
         stt=deepgram.STT(model="nova-3"),
         llm=google.LLM(model="gemini-2.5-pro"),
-        tts=murf.TTS(model="en-US-falcon"),
+        tts=google.TTS(),
         turn_detection=MultilingualModel(),
         vad=silero.VAD.load(),
     )
 
     await session.start(agent=FraudAlertAgent(userdata=userdata), room=ctx.room)
+    
+    # For inbound calls, greet the user
+    if not is_outbound:
+        await session.generate_reply(instructions="Greet the user and offer your assistance.")
+    
+    logger.info("=" * 60)
+    logger.info("✅ AGENT SESSION COMPLETED")
+    logger.info("=" * 60)
+
 
 if __name__ == "__main__":
     cli.run_app(server)
