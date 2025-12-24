@@ -18,6 +18,7 @@ from livekit.plugins import google, deepgram, silero, murf
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 from pydantic import Field
 from dataclasses import dataclass
+from todoist_api_python.api import TodoistAPI
 
 load_dotenv()
 logger = logging.getLogger("wellness-companion")
@@ -129,18 +130,25 @@ class WellnessAgent(Agent):
         tasks: Annotated[list[str], Field(description="List of task descriptions to create in Todoist")]
     ) -> str:
         """
-        Create tasks in Todoist via MCP for the user's goals.
+        Create tasks in Todoist for the user's goals.
         Call this when user wants to turn their goals into actionable tasks.
         """
-        # Simulate MCP call to Todoist
-        created_tasks = []
-        for task in tasks:
-            # In real implementation, this would call Todoist MCP server
-            task_id = f"task_{len(created_tasks) + 1}"
-            created_tasks.append(f"'{task}' (ID: {task_id})")
-            logger.info(f"Created Todoist task: {task}")
+        api_token = os.getenv("TODOIST_API_TOKEN")
+        if not api_token:
+            return "Sorry, Todoist integration is not configured. Please set your TODOIST_API_TOKEN."
         
-        return f"Successfully created {len(tasks)} tasks in Todoist: {', '.join(created_tasks)}. You can manage them in your Todoist app."
+        api = TodoistAPI(api_token)
+        created_tasks = []
+        try:
+            for task_desc in tasks:
+                task = api.add_task(content=task_desc)
+                created_tasks.append(f"'{task_desc}' (ID: {task.id})")
+                logger.info(f"Created Todoist task: {task_desc} with ID {task.id}")
+            
+            return f"Successfully created {len(tasks)} tasks in Todoist: {', '.join(created_tasks)}. You can manage them in your Todoist app."
+        except Exception as e:
+            logger.error(f"Error creating Todoist tasks: {e}")
+            return "Sorry, I couldn't create the tasks right now. Please check your Todoist API token and try again."
 
     @function_tool
     async def analyze_weekly_trends(
@@ -197,16 +205,24 @@ You're showing consistent commitment to your wellness journey! Keep up the great
         time: Annotated[str, Field(description="When to do the activity (e.g., '6 pm', 'tomorrow morning')")]
     ) -> str:
         """
-        Create a follow-up reminder for an important wellness activity via MCP.
+        Create a follow-up reminder for an important wellness activity in Todoist.
         Use this when user mentions specific timed activities they want to remember.
         """
-        # Simulate creating a reminder via MCP (could be Google Calendar, Todoist, etc.)
-        reminder_details = f"Reminder set for: {activity} at {time}"
+        api_token = os.getenv("TODOIST_API_TOKEN")
+        if not api_token:
+            return "Sorry, Todoist integration is not configured. Please set your TODOIST_API_TOKEN."
         
-        # In real implementation, this would call an MCP server like Zapier or Google Calendar
-        logger.info(f"Created reminder: {reminder_details}")
-        
-        return f"✅ Reminder created! I'll help you remember to {activity} at {time}. You can check your calendar or reminder app for the notification."
+        api = TodoistAPI(api_token)
+        try:
+            # Create a task with due date
+            task_content = f"Reminder: {activity}"
+            task = api.add_task(content=task_content, due_string=time)
+            logger.info(f"Created Todoist reminder: {task_content} at {time} with ID {task.id}")
+            
+            return f"✅ Reminder created in Todoist! I'll help you remember to {activity} at {time}. Check your Todoist app for the task."
+        except Exception as e:
+            logger.error(f"Error creating reminder: {e}")
+            return "Sorry, I couldn't create the reminder right now. Please check your Todoist API token and try again."
 
     @function_tool
     async def show_recent_history(
@@ -267,8 +283,8 @@ async def main(ctx: JobContext) -> None:
     session = AgentSession[Userdata](
         userdata=userdata,
         stt=deepgram.STT(model="nova-3"),
-        llm=google.LLM(model="gemini-2.5-flash"),
-        tts=murf.TTS(model="en-US-falcon"), # REQUIRED for the challenge
+        llm=google.LLM(model="gemini-2.5-flash-lite"),
+        tts=murf.TTS(voice="Alicia", model="Murf Falcon"),
         turn_detection=MultilingualModel(),
         vad=silero.VAD.load(),
     )
